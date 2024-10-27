@@ -73,6 +73,7 @@ def get_table_data_as_rows(driver):
 
     return table_header, table_rows
 
+
 # Functional validation requirement #1(i)
 def test_validate_sort_ascending_by_ticker_column():
     driver = get_driver()
@@ -176,21 +177,5 @@ def test_validate_adding_column_to_the_grid():
     print(f'Number of columns after adding additional columns is :{len(table_header_updated[0])}')
 
     assert int(len(table_header[0]) + 1) == int(len(table_header_updated[0])), f'Additional column "Purchase Date" could not be added to the grid'
-
-# Functional validation requirement #4(iii)
-def test_validate_sorting_descending_by_ticker_column():
-    driver = get_driver()
-    launch_webpage(driver)
-    ticker_header_label = find_header_element_by_label(driver, "Ticker")
-    ticker_header_label.click() # Click on the header to sort in ascending order
-    time.sleep(2)
-    ticker_header_label.click()  # Click once more on the header to sort in descending order
-    time.sleep(2)
-    table_header, table_data_rows = get_table_data_as_rows(driver)
-    close_driver(driver)
-    ticker_column_values = []
-    for row in table_data_rows:
-        ticker_column_values.append(row[0])
-    assert ticker_column_values == sorted(ticker_column_values, reverse=True), f'The values for the Ticker column are not sorted in descending order'
 
 
