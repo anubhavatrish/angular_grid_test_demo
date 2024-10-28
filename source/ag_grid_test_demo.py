@@ -35,6 +35,23 @@ def find_header_element_by_label(driver, label):
             return header
 
 
+def validate_filter_instrument_column_by_value(filter_value):
+    driver = get_driver()
+    launch_webpage(driver)
+    # Wait for the filter button to appear
+    WebDriverWait(driver, 10).until(ec.visibility_of_all_elements_located((By.XPATH, "/html/body/div[1]/div[2]/div/astro-island/div/div/div[3]/div[2]/div[2]/div[1]/div[2]/div/div/div[2]/div[3]/div/span[2]/span")))
+    # Locate the filter button and click on it
+    driver.find_element(By.XPATH, "/html/body/div[1]/div[2]/div/astro-island/div/div/div[3]/div[2]/div[2]/div[1]/div[2]/div/div/div[2]/div[3]/div/span[2]/span").click()
+    # Locate the filter text box and populate it with the filter string
+    driver.find_element(By.XPATH, "//*[@id='ag-150-input']").send_keys(f'{filter_value}\n')
+    time.sleep(2)
+    # Load the table data after applying the filter
+    table_header, table_data_rows = get_table_data_as_rows(driver) # Fetch the table header and rows after applying the filter
+    for row in table_data_rows:
+        assert filter_value == row[1], f'The "Instrument" column value "{row[1]}" for the row with ticker "{row[0]}" does not equal to applied filter value "{filter_value}"'
+
+
+
 def get_table_data_as_rows(driver):
     table_rows = []
     table_header = []
@@ -177,5 +194,29 @@ def test_validate_adding_column_to_the_grid():
     print(f'Number of columns after adding additional columns is :{len(table_header_updated[0])}')
 
     assert int(len(table_header[0]) + 1) == int(len(table_header_updated[0])), f'Additional column "Purchase Date" could not be added to the grid'
+
+# Functional validation requirement #4 (iii)(1)
+def test_validate_filter_instrument_column_by_bond():
+    validate_filter_instrument_column_by_value('Bond')
+
+
+# Functional validation requirement #4 (iii)(2)
+def test_validate_filter_instrument_column_by_etf():
+    validate_filter_instrument_column_by_value('ETF')
+
+
+# Functional validation requirement #4 (iii)(3)
+def test_validate_filter_instrument_column_by_crypto():
+    validate_filter_instrument_column_by_value('Crypto')
+
+
+# Functional validation requirement #4 (iii)(4)
+def test_validate_filter_instrument_column_by_stock():
+    validate_filter_instrument_column_by_value('Stock')
+
+
+
+
+
 
 
